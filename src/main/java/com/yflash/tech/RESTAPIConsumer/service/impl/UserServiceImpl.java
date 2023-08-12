@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,9 +33,9 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
 
     @Override
+    @Retryable(label = "retry-for-getAllUsers()")
     public List<User> getAllUsers() {
         List<User> result = null;
-        try {
             LOGGER.info("Preparing the request ...");
             String wsUrl = environment.getProperty("producer.api.url");
             LOGGER.info("\t|--- Setting up the headers");
@@ -52,9 +53,6 @@ public class UserServiceImpl implements UserService {
                 result = response.getBody();
                 LOGGER.info("Data fetched successfully !");
             }
-        } catch (Exception e) {
-            LOGGER.error("Error in getAllUsers() : {}", e.getMessage());
-        }
         return result;
     }
 
