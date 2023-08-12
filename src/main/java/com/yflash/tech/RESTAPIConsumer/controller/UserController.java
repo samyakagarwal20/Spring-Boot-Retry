@@ -22,7 +22,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping(value = "/get-all-users", produces = "application/json")
-    ResponseEntity<List<User>> getAllUsers(HttpServletRequest request) {
+    ResponseEntity<List<User>> getAllUsers(HttpServletRequest request) throws Exception {
         long start = System.currentTimeMillis();
         LOGGER.info("Intercepted request for {}", request.getRequestURL());
         ResponseEntity<List<User>> response = new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
