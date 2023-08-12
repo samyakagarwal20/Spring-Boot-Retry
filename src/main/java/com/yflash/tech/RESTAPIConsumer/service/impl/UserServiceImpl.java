@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
     @Retryable(label = "retry-getAllUsers()", maxAttempts = 4, backoff = @Backoff(delay = 2000), retryFor = {IOException.class}, noRetryFor = {SQLException.class})
     public List<User> getAllUsers() {
         List<User> result = null;
+        try{
             LOGGER.info("Preparing the request ...");
             String wsUrl = environment.getProperty("producer.api.url");
             LOGGER.info("\t|--- Setting up the headers");
@@ -47,7 +48,8 @@ public class UserServiceImpl implements UserService {
 
             LOGGER.info("\t|--- Setting up the request body");
             HttpEntity<String> reqEntity = new HttpEntity<>(headers);
-            ParameterizedTypeReference<List<User>> responseType = new ParameterizedTypeReference<List<User>>() {};
+            ParameterizedTypeReference<List<User>> responseType = new ParameterizedTypeReference<List<User>>() {
+            };
 
             LOGGER.info("Fetching users data ...");
             ResponseEntity<List<User>> response = restTemplate.exchange(wsUrl, HttpMethod.GET, reqEntity, responseType);
@@ -56,6 +58,9 @@ public class UserServiceImpl implements UserService {
                 result = response.getBody();
                 LOGGER.info("Data fetched successfully !");
             }
+        } catch (Exception e) {
+            LOGGER.error("Error in getAllUsers() by {} : {}", e.getClass().getCanonicalName(), e.getMessage());
+        }
         return result;
     }
 
