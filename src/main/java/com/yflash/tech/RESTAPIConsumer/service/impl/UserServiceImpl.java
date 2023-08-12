@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     private boolean attemptStatus = false;
 
     @Override
-    @Retryable(label = "retry-getAllUsers()", maxAttempts = 4, backoff = @Backoff(delay = 1000))
+    @Retryable(recover = "recoverException", label = "retry-getAllUsers()", maxAttempts = 4, backoff = @Backoff(delay = 1000))
     public List<User> getAllUsers() throws Exception {
         List<User> result = null;
         try {
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Recover
-    public List<User> recover(Throwable throwable) {
+    public List<User> recoverException(Throwable throwable) {
         LOGGER.error("Encountered exception {} : {}", throwable.getClass().getCanonicalName(), throwable.getMessage());
         LOGGER.info("Max number of retry attempts exhausted.");
         LOGGER.info("Please try again in sometime...");

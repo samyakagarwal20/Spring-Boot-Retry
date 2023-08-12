@@ -110,4 +110,8 @@ public List<User> recoverException(Throwable throwable, String a, int b) {
     // fallback logic
 }
 ```
+```
+Note: In case if multiple recovery methods are present in the same class, then we can specify the selected one for ```@Retryable``` annotation via the ```recover``` attribute
 
+@Retryable(recover = "recoverException", label = "retry-getAllUsers()", maxAttempts = 4, backoff = @Backoff(delay = 2000), retryFor = {IOException.class}, noRetryFor = {SQLException.class})
+```
