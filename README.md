@@ -83,4 +83,31 @@ public List<User> getAllUsers() {
 }
 ```
 
+---
+
+## Approach 3: @Retryable annotation with @Recover
+
+This approach is simply an extension of the approach 2.
+
+The ```@Recover``` annotation is used in conjunction with the ```@Retryable``` annotation to **specify a fallback method** that should be executed when a retryable operation fails and all retries have been exhausted. This allows you to define an alternative course of action when the main operation cannot be successfully completed after multiple retries.
+
+The recovery handler should have the **first parameter of type Throwable (optional)** and the same return type. The following arguments are populated from the **argument list of the failed method in the same order**.
+
+```
+@Retryable(label = "retry-getAllUsers()", maxAttempts = 4, backoff = @Backoff(delay = 2000), retryFor = {IOException.class}, noRetryFor = {SQLException.class})
+public List<User> getAllUsers(String a, int b) {
+    try{
+        // code
+    } catch (Exception e) {
+        LOGGER.error("Error in getAllUsers() by {} : {}", e.getClass().getCanonicalName(), e.getMessage());
+    }
+}
+```
+
+```
+@Recover
+public List<User> recoverException(Throwable throwable, String a, int b) {
+    // fallback logic
+}
+```
 
