@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
 
     @Override
-    @Retryable(label = "retry-for-getAllUsers()")
+    @Retryable(label = "retry-getAllUsers()")
     public List<User> getAllUsers() {
         List<User> result = null;
             LOGGER.info("Preparing the request ...");
