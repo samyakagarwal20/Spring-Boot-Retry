@@ -36,8 +36,8 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
 
     @Override
-    @Retryable(label = "retry-getAllUsers()", maxAttempts = 4, backoff = @Backoff(delay = 2000), retryFor = {IOException.class}, noRetryFor = {SQLException.class})
-    public List<User> getAllUsers() {
+    @Retryable(label = "retry-getAllUsers()", maxAttempts = 4, backoff = @Backoff(delay = 2000))
+    public List<User> getAllUsers() throws Exception {
         List<User> result = null;
         try{
             LOGGER.info("Preparing the request ...");
@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             LOGGER.error("Error in getAllUsers() by {} : {}", e.getClass().getCanonicalName(), e.getMessage());
+            throw new Exception(e.getMessage());
         }
         return result;
     }
